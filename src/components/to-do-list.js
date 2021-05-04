@@ -1,4 +1,3 @@
-import React from 'react';
 import { Grid, Typography, Button, Card, CardActions, CardContent } from '@material-ui/core';
 import useStyles from '../styles';
 
