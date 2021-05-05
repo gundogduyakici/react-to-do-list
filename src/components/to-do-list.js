@@ -1,41 +1,169 @@
-import { Grid, Typography, Button, Card, CardActions, CardContent } from '@material-ui/core';
+import React from 'react';
+import { Grid, Container, Typography, Button, TextField, Card, CardActions, CardContent } from '@material-ui/core';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import useStyles from '../styles';
 
-const ToDoList = (props) => {
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+  
+    return (
+      <div
+        role="tabpanel"
+        style={{ display: 'contents' }}
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          children
+        )}
+      </div>
+    );
+}
+
+function a11yProps(index) {
+    return {
+      id: `full-width-tab-${index}`,
+      'aria-controls': `full-width-tabpanel-${index}`,
+    };
+}
+
+const ToDoList = ( props ) => {
     const classes = useStyles();
 
-    if(props.todos === undefined)
-        return  <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Opps .. I guess things didn't work out</Typography>
+    /** Tab Content */
+    const [value, setValue] = React.useState(0);
+    /** Todo Array State */
+    const [todos, setTodos] = React.useState([]);    
+    /** Modal Input Values */
+    const [counter, setCounter] = React.useState(0);
+    const [title, setTitle] = React.useState("");
+    const [description, setDescription] = React.useState("");
+    /** Errors State */
+    const [error, setError] = React.useState(false);
+    const [errorTitle, setErrorTitle] = React.useState(false); 
 
-    if(!props.todos.length)
-        return <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any plans?</Typography>
+    const prepareData = () => {
+        if(!title.length || !description.length) {
+            setError(true);
+            setErrorTitle("This field is required.");
+        }else {
+            let todos = { id: counter, title: title, description: description, completed: false, date: new Date().toLocaleString() }
+            setCounter(counter+1);
+
+            setError(false);
+            setErrorTitle("");
+
+            setTodos(previousData => [...previousData, todos])
+
+            setTitle("");
+            setDescription("");
+        }
+    }
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    }
+
+    const updateTask = (id) => {
+        setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo));
+    }
 
     return(
         <>
-            { props.todos.map((data, i) => {
-                return <Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
-                            <Card className={classes.card}>
-                                <CardContent className={classes.cardContent}>
-                                    <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
-                                        {data.date}
-                                    </Typography>
+            <Container className={classes.tabPanel} maxWidth="md">
+                <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" indicatorColor="primary" textColor="primary">
+                    <Tab label="All Tasks" {...a11yProps(0)} />
+                    <Tab label="Completed" {...a11yProps(1)} />
+                    <Tab label="Paused" {...a11yProps(2)} />
+                </Tabs>
+            </Container>
 
-                                    <Typography style={data.completed === true ? {textDecoration: 'line-through', color: 'green'} : null} gutterBottom variant="h5">
-                                        {data.title}
-                                    </Typography>
+            <Container className={classes.cardGrid} maxWidth="md">
+                <Grid container spacing={2} justify="center">
+                    <TabPanel value={value} index={0}>                            
+                        {
+                            !todos.length ? <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any plans?</Typography> :
+                            todos.map((data, i) => {
+                                return (<Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
+                                            <Card className={classes.card}>
+                                                <CardContent className={classes.cardContent}>
+                                                    <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
+                                                        {data.date}
+                                                    </Typography>
 
-                                    <Typography>
-                                        {data.description}
-                                    </Typography>
-                                </CardContent>
+                                                    <Typography style={data.completed === true ? {textDecoration: 'line-through', color: 'green'} : null} gutterBottom variant="h5">
+                                                        {data.title}
+                                                    </Typography>
 
-                                <CardActions>                                    
-                                    <Button onClick={() => props.updateTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark"}</Button>
-                                    <Button size="small" color="primary">Mark Pause</Button>
-                                </CardActions>
-                            </Card>
-                        </Grid>
-            }) }            
+                                                    <Typography>
+                                                        {data.description}
+                                                    </Typography>
+                                                </CardContent>
+
+                                                <CardActions>                                    
+                                                    <Button onClick={() => updateTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark"}</Button>
+                                                    <Button size="small" color="primary">Mark Pause</Button>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid>)
+                            }) 
+                        }
+                    </TabPanel>
+
+                    <TabPanel value={value} index={1}>
+                        <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any completed?</Typography>
+                    </TabPanel>
+                    
+                    <TabPanel value={value} index={2}>
+                        <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any paused?</Typography>
+                    </TabPanel>
+                </Grid>
+            </Container>
+
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                className={classes.modal}
+                open={props.open}
+                onClose={props.close}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+            >
+                <Fade in={props.open}>
+                    <div className={classes.paper}>                
+                        <form autoComplete="off">
+                            <Container maxWidth="sm">
+                                <Typography gutterBottom align="center" variant="h5" style={{ marginBottom: 20, marginTop: 10 }}> Job Information </Typography>
+
+                                <Grid container justify="center" spacing={2}>
+                                    <Grid item>
+                                        <TextField error={error} helperText={errorTitle} id="title" label="Enter Title" value={title} onChange={(event) => setTitle(event.target.value)} variant="outlined" />
+                                    </Grid>
+
+                                    <Grid item>
+                                        <TextField error={error} helperText={errorTitle} id="description" label="Enter Description" value={description} onChange={(event) => setDescription(event.target.value)} variant="outlined" />
+                                    </Grid>
+
+                                    <Grid item style={{ marginTop: 10 }}>
+                                        <Button onClick={prepareData} variant="contained" color="secondary">
+                                            Create
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </Container>
+                        </form>
+                    </div>
+                </Fade>
+            </Modal>
         </>
     )
 }
