@@ -84,8 +84,8 @@ function App() {
         }
     }
 
-    const handleUpdateTask = (id) => {
-        setTodos(todos.map(todo => todo.id === id ? {...todo, completed: true} : todo));
+    const updateTask = (id) => {
+        setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo));
     }
 
     return (
@@ -130,7 +130,7 @@ function App() {
                             </Grid>
                         </div>
                     </Container>
-                </div> 
+                </div>
                 
                 <Container className={classes.tabPanel} maxWidth="md">
                     <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" indicatorColor="primary" textColor="primary">
@@ -143,7 +143,7 @@ function App() {
                 <Container className={classes.cardGrid} maxWidth="md">
                     <Grid container spacing={2} justify="center">
                         <TabPanel value={value} index={0}>                            
-                            <ToDoList todos={todos} updateTask={handleUpdateTask} />
+                            <ToDoList todos={todos} updateTask={updateTask} />
                         </TabPanel>
 
                         <TabPanel value={value} index={1}>

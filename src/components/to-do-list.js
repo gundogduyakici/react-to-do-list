@@ -29,8 +29,8 @@ const ToDoList = (props) => {
                                     </Typography>
                                 </CardContent>
 
-                                <CardActions>
-                                    <Button onClick={() => props.updateTask(data.id)} size="small" color="primary">Mark Completed</Button>
+                                <CardActions>                                    
+                                    <Button onClick={() => props.updateTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark"}</Button>
                                     <Button size="small" color="primary">Mark Pause</Button>
                                 </CardActions>
                             </Card>
