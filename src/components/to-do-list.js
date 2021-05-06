@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { Grid, Container, Typography, Button, TextField, Card, CardActions, CardContent } from '@material-ui/core';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -33,20 +33,24 @@ function a11yProps(index) {
     };
 }
 
-const ToDoList = ( props ) => {
-    const classes = useStyles();
+const ToDoList = forwardRef((props, ref) => {
+    useImperativeHandle(ref, () => ({
+        checkAll: updateAllTask
+    }))
+
+    const classes = useStyles();    
 
     /** Tab Content */
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = useState(0);
     /** Todo Array State */
-    const [todos, setTodos] = React.useState([]);    
+    const [todos, setTodos] = useState([]);    
     /** Modal Input Values */
-    const [counter, setCounter] = React.useState(0);
-    const [title, setTitle] = React.useState("");
-    const [description, setDescription] = React.useState("");
+    const [counter, setCounter] = useState(0);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     /** Errors State */
-    const [error, setError] = React.useState(false);
-    const [errorTitle, setErrorTitle] = React.useState(false); 
+    const [error, setError] = useState(false);
+    const [errorTitle, setErrorTitle] = useState(false); 
 
     const prepareData = () => {
         if(!title.length || !description.length) {
@@ -68,6 +72,10 @@ const ToDoList = ( props ) => {
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    }
+
+    const updateAllTask = (check) => {        
+        setTodos(todos.map(todo => todo.completed === !check ? {...todo, completed: check} : todo));
     }
 
     const updateCompletedTask = (id) => {
@@ -97,27 +105,27 @@ const ToDoList = ( props ) => {
                                 return (
                                     data.completed === false && data.paused === false ? 
                                         <Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
-                                                <Card className={classes.card}>
-                                                    <CardContent className={classes.cardContent}>
-                                                        <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
-                                                            {data.date}
-                                                        </Typography>
+                                            <Card className={classes.card}>
+                                                <CardContent className={classes.cardContent}>
+                                                    <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
+                                                        {data.date}
+                                                    </Typography>
 
-                                                        <Typography style={data.completed === true ? { textDecoration: 'line-through', color: 'green' } : null} gutterBottom variant="h5">
-                                                            {data.title}
-                                                        </Typography>
+                                                    <Typography style={data.completed === true ? { textDecoration: 'line-through', color: 'green' } : null} gutterBottom variant="h5">
+                                                        {data.title}
+                                                    </Typography>
 
-                                                        <Typography>
-                                                            {data.description}
-                                                        </Typography>
-                                                    </CardContent>
+                                                    <Typography>
+                                                        {data.description}
+                                                    </Typography>
+                                                </CardContent>
 
-                                                    <CardActions>
-                                                        <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
-                                                        <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
-                                                    </CardActions>
-                                                </Card>
-                                            </Grid> : null
+                                                <CardActions>
+                                                    <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
+                                                    <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid> : null
                                 )
                             }) 
                         }
@@ -130,27 +138,27 @@ const ToDoList = ( props ) => {
                                     return (
                                         data.completed === true ? 
                                         <Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
-                                                <Card className={classes.card}>
-                                                    <CardContent className={classes.cardContent}>
-                                                        <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
-                                                            {data.date}
-                                                        </Typography>
+                                            <Card className={classes.card}>
+                                                <CardContent className={classes.cardContent}>
+                                                    <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
+                                                        {data.date}
+                                                    </Typography>
 
-                                                        <Typography style={data.completed === true ? { textDecoration: 'line-through', color: 'green' } : null} gutterBottom variant="h5">
-                                                            {data.title}
-                                                        </Typography>
+                                                    <Typography style={data.completed === true ? { textDecoration: 'line-through', color: 'green' } : null} gutterBottom variant="h5">
+                                                        {data.title}
+                                                    </Typography>
 
-                                                        <Typography>
-                                                            {data.description}
-                                                        </Typography>
-                                                    </CardContent>
+                                                    <Typography>
+                                                        {data.description}
+                                                    </Typography>
+                                                </CardContent>
 
-                                                    <CardActions>
-                                                        <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
-                                                        <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
-                                                    </CardActions>
-                                                </Card>
-                                            </Grid> : null
+                                                <CardActions>
+                                                    <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
+                                                    <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid> : null
                                     )
                                 }) 
                         }
@@ -163,27 +171,27 @@ const ToDoList = ( props ) => {
                                     return (
                                         data.paused === true ? 
                                         <Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
-                                                <Card className={classes.card}>
-                                                    <CardContent className={classes.cardContent}>
-                                                        <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
-                                                            {data.date}
-                                                        </Typography>
+                                            <Card className={classes.card}>
+                                                <CardContent className={classes.cardContent}>
+                                                    <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
+                                                        {data.date}
+                                                    </Typography>
 
-                                                        <Typography style={data.paused === true ? { color: '#fcb103'} : null } gutterBottom variant="h5">
-                                                            {data.title}
-                                                        </Typography>
+                                                    <Typography style={data.paused === true ? { color: '#fcb103'} : null } gutterBottom variant="h5">
+                                                        {data.title}
+                                                    </Typography>
 
-                                                        <Typography>
-                                                            {data.description}
-                                                        </Typography>
-                                                    </CardContent>
+                                                    <Typography>
+                                                        {data.description}
+                                                    </Typography>
+                                                </CardContent>
 
-                                                    <CardActions>
-                                                        <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
-                                                        <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
-                                                    </CardActions>
-                                                </Card>
-                                            </Grid> : null
+                                                <CardActions>
+                                                    <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
+                                                    <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid> : null
                                     )
                                 }) 
                             }
@@ -231,6 +239,6 @@ const ToDoList = ( props ) => {
             </Modal>
         </>
     )
-}
+});
 
 export default ToDoList;

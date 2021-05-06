@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import MetaDecorator from './util/meta-decorator';
 import { Typography, AppBar, Button, CssBaseline, Grid, Toolbar, Container } from '@material-ui/core';
 import { NoteAddOutlined } from '@material-ui/icons';
@@ -8,8 +8,12 @@ import useStyles from './styles';
 
 function App() {
     const classes = useStyles();
+
+    const todoRef = useRef();
+
     /** Modal Value */
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [check, setCheck] = useState(true);
 
     const handleOpen = () => {
         setOpen(true);
@@ -17,6 +21,11 @@ function App() {
 
     const handleClose = () => {
         setOpen(false);
+    }
+
+    const checkAllTodos = () => {
+        setCheck(!check)
+        todoRef.current.checkAll(check)
     }
     
     return (
@@ -54,8 +63,8 @@ function App() {
                                 </Grid>
 
                                 <Grid item>
-                                    <Button variant="outlined" color="primary">
-                                        Check All
+                                    <Button onClick={checkAllTodos} variant="outlined" color="primary">
+                                        {check === true ? "Check All" : "Uncheck All"}
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -63,7 +72,7 @@ function App() {
                     </Container>
                 </div>
 
-                <ToDoList open={open} close={handleClose} />
+                <ToDoList ref={todoRef} open={open} close={handleClose} />
                                 
             </main>
 
