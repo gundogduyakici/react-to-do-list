@@ -53,7 +53,7 @@ const ToDoList = ( props ) => {
             setError(true);
             setErrorTitle("This field is required.");
         }else {
-            let todos = { id: counter, title: title, description: description, completed: false, date: new Date().toLocaleString() }
+            let todos = { id: counter, title: title, description: description, completed: false, paused: false, date: new Date().toLocaleString() }
             setCounter(counter+1);
 
             setError(false);
@@ -70,8 +70,12 @@ const ToDoList = ( props ) => {
         setValue(newValue);
     }
 
-    const updateTask = (id) => {
+    const updateCompletedTask = (id) => {
         setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo));
+    }
+
+    const updatePausedTask = (id) => {
+        setTodos(todos.map(todo => todo.id === id ? {...todo, paused: !todo.paused} : todo));
     }
 
     return(
@@ -90,38 +94,99 @@ const ToDoList = ( props ) => {
                         {
                             !todos.length ? <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any plans?</Typography> :
                             todos.map((data, i) => {
-                                return (<Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
-                                            <Card className={classes.card}>
-                                                <CardContent className={classes.cardContent}>
-                                                    <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
-                                                        {data.date}
-                                                    </Typography>
+                                return (
+                                    data.completed === false && data.paused === false ? 
+                                        <Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
+                                                <Card className={classes.card}>
+                                                    <CardContent className={classes.cardContent}>
+                                                        <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
+                                                            {data.date}
+                                                        </Typography>
 
-                                                    <Typography style={data.completed === true ? {textDecoration: 'line-through', color: 'green'} : null} gutterBottom variant="h5">
-                                                        {data.title}
-                                                    </Typography>
+                                                        <Typography style={data.completed === true ? { textDecoration: 'line-through', color: 'green' } : null} gutterBottom variant="h5">
+                                                            {data.title}
+                                                        </Typography>
 
-                                                    <Typography>
-                                                        {data.description}
-                                                    </Typography>
-                                                </CardContent>
+                                                        <Typography>
+                                                            {data.description}
+                                                        </Typography>
+                                                    </CardContent>
 
-                                                <CardActions>                                    
-                                                    <Button onClick={() => updateTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark"}</Button>
-                                                    <Button size="small" color="primary">Mark Pause</Button>
-                                                </CardActions>
-                                            </Card>
-                                        </Grid>)
+                                                    <CardActions>
+                                                        <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
+                                                        <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid> : null
+                                )
                             }) 
                         }
                     </TabPanel>
 
                     <TabPanel value={value} index={1}>
-                        <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any completed?</Typography>
+                        {
+                            !todos.length ? <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any completed?</Typography> :
+                                todos.map((data, i) => {
+                                    return (
+                                        data.completed === true ? 
+                                        <Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
+                                                <Card className={classes.card}>
+                                                    <CardContent className={classes.cardContent}>
+                                                        <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
+                                                            {data.date}
+                                                        </Typography>
+
+                                                        <Typography style={data.completed === true ? { textDecoration: 'line-through', color: 'green' } : null} gutterBottom variant="h5">
+                                                            {data.title}
+                                                        </Typography>
+
+                                                        <Typography>
+                                                            {data.description}
+                                                        </Typography>
+                                                    </CardContent>
+
+                                                    <CardActions>
+                                                        <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
+                                                        <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid> : null
+                                    )
+                                }) 
+                        }
                     </TabPanel>
                     
                     <TabPanel value={value} index={2}>
-                        <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any paused?</Typography>
+                        {
+                            !todos.length ? <Typography style={{ marginTop: 20 }} gutterBottom variant="h5">Mmm .. Don't have any paused?</Typography> :
+                                todos.map((data, i) => {
+                                    return (
+                                        data.paused === true ? 
+                                        <Grid key={i} item xs={12} sm={6} md={4} lg={4} style={{ padding: 10 }}>
+                                                <Card className={classes.card}>
+                                                    <CardContent className={classes.cardContent}>
+                                                        <Typography style={{ fontSize: 12, float: 'right' }}  gutterBottom>
+                                                            {data.date}
+                                                        </Typography>
+
+                                                        <Typography style={data.paused === true ? { color: '#fcb103'} : null } gutterBottom variant="h5">
+                                                            {data.title}
+                                                        </Typography>
+
+                                                        <Typography>
+                                                            {data.description}
+                                                        </Typography>
+                                                    </CardContent>
+
+                                                    <CardActions>
+                                                        <Button onClick={() => updateCompletedTask(data.id)} size="small" color="primary">{data.completed === false ? "Mark Completed" : "Unmark Completed"}</Button>
+                                                        <Button onClick={() => updatePausedTask(data.id)} size="small" color="primary">{data.paused === false ? "Mark Paused" : "Unmark Paused"}</Button>
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid> : null
+                                    )
+                                }) 
+                            }
                     </TabPanel>
                 </Grid>
             </Container>
