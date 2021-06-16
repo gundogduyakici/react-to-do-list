@@ -7,7 +7,7 @@ A simple to do list application prepared with react for your daily work.
 
 In the project directory, you can run:
 
-### `yarn start`
+### `npm start`
 
 Runs the app in the development mode.\
 
@@ -17,7 +17,7 @@ The page will reload if you make edits.\
 
 You will also see any lint errors in the console.
 
-### `yarn test`
+### `npm test`
 
 Launches the test runner in the interactive watch mode.\
 
@@ -32,6 +32,9 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ### Code Splitting
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+##Live Preview
+https://gndgdykc-reacttodolist.herokuapp.com/
 
 ## Screenshots
 ![enter image description here](https://i.ibb.co/bXybYV5/to-do-list-app.jpg)
