@@ -75,9 +75,6 @@ const ToDoList = forwardRef((props, ref) => {
             let todos = { id: counter, title: title, description: description, completed: false, paused: false, date: new Date().toLocaleString() }
             setCounter(counter+1);
 
-            setErrorDescriptionValue(false);
-            setErrorDescriptionText("");
-
             setTitle("");
             setDescription("");
 
