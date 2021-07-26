@@ -49,24 +49,39 @@ const ToDoList = forwardRef((props, ref) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     /** Errors State */
-    const [error, setError] = useState(false);
-    const [errorTitle, setErrorTitle] = useState(false); 
+    const [errorTitleValue, setErrorTitleValue] = useState(false);
+    const [errorDescriptionValue, setErrorDescriptionValue] = useState(false);
+    const [errorTitleText, setErrorTitleText] = useState("");
+    const [errorDescriptionText, setErrorDescriptionText] = useState("");
 
     const prepareData = () => {
-        if(!title.length || !description.length) {
-            setError(true);
-            setErrorTitle("This field is required.");
+        if(!title.length) {
+            setErrorTitleValue(true);
+            setErrorTitleText("Title cannot be empty!");
         }else {
+            setErrorTitleValue(false);
+            setErrorTitleText("");
+        }
+
+        if(!description.length) {
+            setErrorDescriptionValue(true);
+            setErrorDescriptionText("Description cannot be empty!");
+        }else {
+            setErrorDescriptionValue(false);
+            setErrorDescriptionText("");
+        }
+
+        if(title.length && description.length) {
             let todos = { id: counter, title: title, description: description, completed: false, paused: false, date: new Date().toLocaleString() }
             setCounter(counter+1);
 
-            setError(false);
-            setErrorTitle("");
-
-            setTodos(previousData => [...previousData, todos])
+            setErrorDescriptionValue(false);
+            setErrorDescriptionText("");
 
             setTitle("");
             setDescription("");
+
+            setTodos(previousData => [...previousData, todos])
         }
     }
 
@@ -219,11 +234,11 @@ const ToDoList = forwardRef((props, ref) => {
 
                                 <Grid container justify="center" spacing={2}>
                                     <Grid item>
-                                        <TextField error={error} helperText={errorTitle} id="title" label="Enter Title" value={title} onChange={(event) => setTitle(event.target.value)} variant="outlined" />
+                                        <TextField error={errorTitleValue} helperText={errorTitleText} id="title" label="Enter Title" value={title} onChange={(event) => setTitle(event.target.value)} variant="outlined" />
                                     </Grid>
 
                                     <Grid item>
-                                        <TextField error={error} helperText={errorTitle} id="description" label="Enter Description" value={description} onChange={(event) => setDescription(event.target.value)} variant="outlined" />
+                                        <TextField error={errorDescriptionValue} helperText={errorDescriptionText} id="description" label="Enter Description" value={description} onChange={(event) => setDescription(event.target.value)} variant="outlined" />
                                     </Grid>
 
                                     <Grid item style={{ marginTop: 10 }}>
